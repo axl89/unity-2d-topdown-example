@@ -12,10 +12,12 @@ public class timetable : MonoBehaviour
     public GameObject inputFieldcB;
     public int weekDays;
     public int slots;
+    protected int one;
+    protected int two;
 
     protected bool isTasking;
-    protected string[][] buttons; //Need 49 copies (7 days x 7 slots)
-
+    protected string[,] buttons; //Need 49 copies (7 days x 7 slots)
+    
 
     /*
      * Initialize the buttons bidimensional array given weekDays and slots
@@ -26,7 +28,7 @@ public class timetable : MonoBehaviour
         {
             for (int slot = 0; slot < slots; slot++)
             {
-                buttons[day,slot] = "";
+                buttons[day, slot] = "";
             }
             
         }
@@ -46,11 +48,11 @@ public class timetable : MonoBehaviour
     {
         if (isTasking == true)
         {
-            GameObject.FindWithTag("gap").GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.5f);
+            //GameObject.Find("slot").GetComponent<Image>().enabled = true; FIXME
         }
-        else
+        if (isTasking == false)
         {
-            GameObject.FindWithTag("gap").GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
+            //GameObject.Find("slot").GetComponent<Image>().enabled = false; FIXME
         }
     }
 
@@ -84,13 +86,29 @@ public class timetable : MonoBehaviour
 
         }
     }
+
+    public void day1(int i) //working on this
+    {
+        if (isTasking == true)
+        {
+            if (i == 1)
+            {
+            }
+            else
+            {
+
+            }
+        }
+
+    }
+
     public void editTask(int i)
     {
         if (isTasking == true)
         {
             if (i == 1)
             {
-                //do something along the lines of replacing the needed string with the text of an input field (already existing) 
+                
             }
             else
             {
