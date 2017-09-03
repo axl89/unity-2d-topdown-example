@@ -1,101 +1,214 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
+using System.Collections;
+using System.Xml;
+using System;
 
-
-public class timetable : MonoBehaviour
+public class weather : MonoBehaviour
 {
 
-    public GameObject popUp;
-    public GameObject inputField;
-    public GameObject inputFieldtB;
-    public GameObject inputFieldcB;
-    public InputField taskField;
-    public Text slotTask;
-    public int weekDays;
-    public int slots;
-    public int one;
-    public int two;
+    public Text tempUI;
+    public Text weatherUI;
+    public Text locationUI;
+    public Button fabb;
+    public Sprite t1;
+    public Sprite t2;
+    public Sprite t3;
+    public Sprite t4;
+    public Sprite t5;
+    public Sprite t6;
+    public Sprite t7;
+    public Sprite t8;
+    public Sprite t9;
+    public Sprite w1; // clear
+    public Sprite w2; // clouds
+    public Sprite w3; // rain
+    public GameObject fab; 
+    public GameObject termo;
+    public GameObject weatherIcon;
+    public InputField locationchangeUI;
+    public InputField countrychangeUI;
+    public Text locationField;
+    public Text countryField;
+    static string fetchedWeather;
+    protected int j;
+    string temp;
+    public float temperature;
+    public string cWeather;
+    public string location;
+    public string country;
 
-    protected bool isTasking;
-    protected string[,] buttons; //Need 49 copies (7 days x 7 slots)
-    
-
-    /*
-     * Initialize the buttons bidimensional array given weekDays and slots
-     */
-    protected void initializeButtons()
-    {
-        for(int day = 0; day < weekDays; day++)
-        {
-            for (int slot = 0; slot < slots; slot++)
-            {
-                buttons[day, slot] = "";
-            }
-            
-        }
-    }
-    // Use this for initialization
     void Start()
     {
-        weekDays = 7; //7 days a week
-        slots = 7; //7 slots per day
-        buttons = new string[weekDays,slots]; // Makes a bidimensional array of 7x7
-
-        initializeButtons();
+        if (PlayerPrefs.GetInt("first") == 0)
+        {
+            PlayerPrefs.SetString("deflocation", "Madrid");
+            PlayerPrefs.SetString("defcountry", "es");
+        }
+        StartCoroutine(GetWeather());
+        j = 0;
+        location = PlayerPrefs.GetString("deflocation");
+        country = PlayerPrefs.GetString("defcountry");
     }
 
-    // Update is called once per frame
+    IEnumerator GetWeather()
+    {
+        //fetching and storing information
+        if (locationchangeUI.text != "")
+        {
+            location = locationchangeUI.text;
+            PlayerPrefs.SetInt("first", 1);
+        }
+        if (countrychangeUI.text != "")
+            country = countrychangeUI.text;
+        WWW www = new WWW("http://api.openweathermap.org/data/2.5/find?q=" + location + "," + country + "&type=accurate&mode=html&lang=nl&units=metric&appid=8db4fb8f632ec5a7a0f6bb5053b0f884");
+
+        yield return www;
+
+        fetchedWeather = www.text;
+        temp = getBetween(fetchedWeather, "\"temp\":", ",\"pressure\"");
+        temperature = float.Parse(temp, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+        temperature = (int)temperature;
+        tempUI.text = temperature.ToString();
+        cWeather = getBetween(fetchedWeather, "main\":\"", "\"");
+        weatherUI.text = cWeather;
+        locationUI.text = location;
+        if (cWeather.Contains("Clear"))
+        {
+            weatherIcon.GetComponent<Image>().sprite = w1;
+        }
+        if (cWeather.Contains("Clouds"))
+        {
+            weatherIcon.GetComponent<Image>().sprite = w2;
+        }
+        if (cWeather.Contains("Thunderstorm"))
+        {
+            weatherIcon.GetComponent<Image>().sprite = w3;
+        }
+        if (cWeather.Contains("Rain"))
+        {
+            weatherIcon.GetComponent<Image>().sprite = w3;
+        }
+        if (cWeather.Contains("Snow"))
+        {
+            weatherIcon.GetComponent<Image>().sprite = w3;
+        }
+        if (cWeather.Contains("Extreme"))
+        {
+            weatherIcon.GetComponent<Image>().sprite = w1;
+        }
+        if (cWeather.Contains("Additional"))
+        {
+            weatherIcon.GetComponent<Image>().sprite = w1;
+        }
+        if (cWeather.Contains("Atmosphere"))
+        {
+            weatherIcon.GetComponent<Image>().sprite = w2;
+        }
+        if (cWeather.Contains("Drizzle"))
+        {
+            weatherIcon.GetComponent<Image>().sprite = w3;
+        }
+        //thermometer
+        if (temperature <= 0)
+        {
+            termo.GetComponent<SpriteRenderer>().sprite = t1;
+        }
+        if (temperature > 0 && temperature <= 5)
+        {
+            termo.GetComponent<SpriteRenderer>().sprite = t2;
+        }
+        if (temperature > 5 && temperature <= 10)
+        {
+            termo.GetComponent<SpriteRenderer>().sprite = t3;
+        }
+        if (temperature > 10 && temperature <= 20)
+        {
+            termo.GetComponent<SpriteRenderer>().sprite = t4;
+        }
+        if (temperature > 20 && temperature <= 25)
+        {
+            termo.GetComponent<SpriteRenderer>().sprite = t5;
+        }
+        if (temperature > 25 && temperature <= 35)
+        {
+            termo.GetComponent<SpriteRenderer>().sprite = t6;
+        }
+        if (temperature > 35 && temperature <= 40)
+        {
+            termo.GetComponent<SpriteRenderer>().sprite = t7;
+        }
+        if (temperature > 40)
+        {
+            termo.GetComponent<SpriteRenderer>().sprite = t8;
+        }
+    }
+
+    public static string getBetween(string strSource, string strStart, string strEnd)
+    {
+        int Start, End;
+        if (strSource.Contains(strStart) && strSource.Contains(strEnd))
+        {
+            Start = strSource.IndexOf(strStart, 0) + strStart.Length;
+            End = strSource.IndexOf(strEnd, Start);
+            return strSource.Substring(Start, End - Start);
+        }
+        else
+        {
+            return "";
+        }
+    }
+
+    public void Fab(int i)
+    { 
+        if (j == 1)
+        {
+            if (i == 1)
+            {
+                fab.GetComponent<Animation>().Play("hide");
+                fabb.enabled = false;
+                StartCoroutine(delay1());
+                i = 0;
+                j = 0;
+            }
+        }
+        if (j == 0)
+        {
+            if (i == 1)
+            {
+                fab.GetComponent<Animation>().Play("show");
+                fabb.enabled = false;
+                StartCoroutine(delay1());
+                j = 1;
+            }
+        }
+        else
+        {
+
+        }
+    }
+
+    IEnumerator delay1()
+    {
+        yield return new WaitForSeconds(0.25f);
+        fabb.enabled = true;
+    }
+
     void Update()
     {
-        if (isTasking == true)
-        {
-            //GameObject.Find("slot").GetComponent<Image>().enabled = true; FIXME
-        }
-        if (isTasking == false)
-        {
-            //GameObject.Find("slot").GetComponent<Image>().enabled = false; FIXME
-        }
-        PlayerPrefs.SetString("clipboardTask", taskField.text);
+        locationField.text = location;
+        countryField.text = country;
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            SceneManager.LoadScene("main");
+            Application.Quit();
         }
-
     }
 
-    /*the following series of functions makes the user record a task when they press a button
-    located in every slot, otherwise whenever the user press a button outside the "editor" the
-    unity buttons through a series of tags set a virtual position in the 2D Array, showing the
-    user the value (task)
-    */
-
-    public void addTask(int i)
+    public void refresh(int i)
     {
         if (i == 1)
         {
-            isTasking = true;
-            inputFieldcB.GetComponent<Button>().enabled = true;
-            inputField.GetComponent<Animation>().Play("emerge");
-            inputFieldtB.GetComponent<Button>().enabled = false;
-            i = 0;
-        }
-        else
-        {
-
-        }
-    }
-    
-    public void closeTask(int i)
-    {
-        if (i == 1)
-        {
-            isTasking = false;
-            inputFieldtB.GetComponent<Button>().enabled = true;
-            inputField.GetComponent<Animation>().Play("immerse");
-            inputFieldcB.GetComponent<Button>().enabled = false;
+            StartCoroutine(GetWeather());
             i = 0;
         }
         else
@@ -104,282 +217,20 @@ public class timetable : MonoBehaviour
         }
     }
 
-    public void day1(int i)
+    public void defaultSet(int i)
     {
         if (i == 1)
         {
-            one = 0;
+            if (locationchangeUI.text != "")
+            {
+                PlayerPrefs.SetString("deflocation", locationchangeUI.text);
+                PlayerPrefs.SetInt("first", 1);
+            }
+            if (countrychangeUI.text != "")
+                PlayerPrefs.SetString("defcountry", countrychangeUI.text);
             i = 0;
         }
-        else
-        {
-
-        }
-
-    }
-    public void day2(int i)
-    {
-        if (i == 1)
-        {
-            one = 1;
-            i = 0;
-
-        }
-        else
-        {
-
-        }
-
     }
 
-    public void day3(int i)
-    {
-        if (i == 1)
-        {
-            one = 2;
-            i = 0;
 
-        }
-        else
-        {
-
-        }
-
-    }
-
-    public void day4(int i)
-    {
-        if (i == 1)
-        {
-            one = 3;
-            i = 0;
-
-        }
-        else
-        {
-
-        }
-
-    }
-
-    public void day5(int i)
-    {
-        if (i == 1)
-        {
-            one = 4;
-            i = 0;
-
-        }
-        else
-        {
-
-        }
-
-    }
-
-    public void day6(int i)
-    {
-        if (i == 1)
-        {
-            one = 5;
-            i = 0;
-        }
-        else
-        {
-
-        }
-
-    }
-
-    public void day7(int i)
-    {
-        if (isTasking == true)
-        {
-            if (i == 1)
-            {
-                one = 6;
-                i = 0;
-            }
-            else
-            {
-
-            }
-        }
-
-    }
-
-    public void slot1(int i)
-    {
-        if (i == 1)
-        {
-            two = 0;
-            if (isTasking == true)
-            {
-                buttons[one, two] = PlayerPrefs.GetString("clipboardTask");
-            }
-            i = 0;
-        }
-        else
-        {
-
-        }
-
-    }
-
-    public void slot2(int i)
-    {
-        if (i == 1)
-        {
-            two = 1;
-            if (isTasking == true)
-            {
-                buttons[one, two] = PlayerPrefs.GetString("clipboardTask");
-            }
-            i = 0;
-        }
-        else
-        {
-
-        }
-
-    }
-
-    public void slot3(int i)
-    {
-        if (i == 1)
-        {
-            two = 2;
-            if (isTasking == true)
-            {
-                buttons[one, two] = PlayerPrefs.GetString("clipboardTask");
-            }
-            i = 0;
-        }
-        else
-        {
-
-        }
-
-    }
-
-    public void slot4(int i)
-    {
-        if (i == 1)
-        {
-            two = 3;
-            if (isTasking == true)
-            {
-                buttons[one, two] = PlayerPrefs.GetString("clipboardTask");
-            }
-            i = 0;
-        }
-        else
-        {
-
-        }
-    }
-
-    public void slot5(int i)
-    {
-        if (i == 1)
-        {
-            two = 4;
-            if (isTasking == true)
-            {
-                buttons[one, two] = PlayerPrefs.GetString("clipboardTask");
-            }
-            i = 0;
-        }
-        else
-        {
-
-        }
-
-    }
-
-    public void slot6(int i)
-    {
-        if (i == 1)
-        {
-            two = 5;
-            if (isTasking == true)
-            {
-                buttons[one, two] = PlayerPrefs.GetString("clipboardTask");
-            }
-            i = 0;
-        }
-        else
-        {
-
-        }
-
-    }
-
-    public void slot7(int i)
-    {
-        if (i == 1)
-        {
-            two = 6;
-            if (isTasking == true)
-            {
-                buttons[one, two] = PlayerPrefs.GetString("clipboardTask");
-            }
-            i = 0;
-        }
-        else
-        {
-
-        }
-
-    }
-
-    public void editTask(int i)
-    {
-        if (isTasking == true)
-        {
-            if (i == 1)
-            {
-                
-            }
-            else
-            {
-
-            }
-        }
-
-    }
-
-    public void showTask(int i)
-    {
-        if (isTasking == false)
-        {
-            if (i == 1)
-            {
-                slotTask.text = buttons[one,two];
-                popUp.GetComponent<Animation>().Play("slide");
-                i = 0;
-            }
-            else
-            {
-
-            }
-        }
-
-    }
-    public void exitPopup(int i)
-    {
-        if (isTasking == false)
-        {
-            if (i == 1)
-            {
-                popUp.GetComponent<Animation>().Play("fade");
-                i = 0;
-            }
-            else
-            {
-
-            }
-        }
-
-    }
 }
