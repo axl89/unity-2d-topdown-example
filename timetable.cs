@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 
 public class timetable : MonoBehaviour
 {
-
+    //DELETEME
     public GameObject popUp;
     public GameObject inputField;
     public GameObject inputFieldtB;
