@@ -2,8 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-
 
 public class timetable : MonoBehaviour
 {
@@ -59,11 +57,6 @@ public class timetable : MonoBehaviour
             //GameObject.Find("slot").GetComponent<Image>().enabled = false; FIXME
         }
         PlayerPrefs.SetString("clipboardTask", taskField.text);
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            SceneManager.LoadScene("main");
-        }
-
     }
 
     public void addTask(int i)
@@ -101,7 +94,7 @@ public class timetable : MonoBehaviour
     {
         if (i == 1)
         {
-            one = 0;
+            one = 1;
             i = 0;
         }
         else
@@ -111,21 +104,6 @@ public class timetable : MonoBehaviour
 
     }
     public void day2(int i) //working on this
-    {
-        if (i == 1)
-        {
-            one = 1;
-            i = 0;
-
-        }
-        else
-        {
-
-        }
-
-    }
-
-    public void day3(int i) //working on this
     {
         if (i == 1)
         {
@@ -140,7 +118,7 @@ public class timetable : MonoBehaviour
 
     }
 
-    public void day4(int i) //working on this
+    public void day3(int i) //working on this
     {
         if (i == 1)
         {
@@ -155,7 +133,7 @@ public class timetable : MonoBehaviour
 
     }
 
-    public void day5(int i) //working on this
+    public void day4(int i) //working on this
     {
         if (i == 1)
         {
@@ -170,11 +148,26 @@ public class timetable : MonoBehaviour
 
     }
 
-    public void day6(int i) //working on this
+    public void day5(int i) //working on this
     {
         if (i == 1)
         {
             one = 5;
+            i = 0;
+
+        }
+        else
+        {
+
+        }
+
+    }
+
+    public void day6(int i) //working on this
+    {
+        if (i == 1)
+        {
+            one = 6;
             i = 0;
         }
         else
@@ -190,7 +183,7 @@ public class timetable : MonoBehaviour
         {
             if (i == 1)
             {
-                one = 6;
+                one = 7;
                 i = 0;
             }
             else
@@ -202,24 +195,6 @@ public class timetable : MonoBehaviour
     }
 
     public void slot1(int i) //working on this
-    {
-        if (i == 1)
-        {
-            two = 0;
-            if (isTasking == true)
-            {
-                buttons[one, two] = PlayerPrefs.GetString("clipboardTask");
-            }
-            i = 0;
-        }
-        else
-        {
-
-        }
-
-    }
-
-    public void slot2(int i) //working on this
     {
         if (i == 1)
         {
@@ -237,7 +212,7 @@ public class timetable : MonoBehaviour
 
     }
 
-    public void slot3(int i) //working on this
+    public void slot2(int i) //working on this
     {
         if (i == 1)
         {
@@ -255,7 +230,7 @@ public class timetable : MonoBehaviour
 
     }
 
-    public void slot4(int i) //working on this
+    public void slot3(int i) //working on this
     {
         if (i == 1)
         {
@@ -270,9 +245,10 @@ public class timetable : MonoBehaviour
         {
 
         }
+
     }
 
-    public void slot5(int i) //working on this
+    public void slot4(int i) //working on this
     {
         if (i == 1)
         {
@@ -287,10 +263,9 @@ public class timetable : MonoBehaviour
         {
 
         }
-
     }
 
-    public void slot6(int i) //working on this
+    public void slot5(int i) //working on this
     {
         if (i == 1)
         {
@@ -308,11 +283,29 @@ public class timetable : MonoBehaviour
 
     }
 
-    public void slot7(int i) //working on this
+    public void slot6(int i) //working on this
     {
         if (i == 1)
         {
             two = 6;
+            if (isTasking == true)
+            {
+                buttons[one, two] = PlayerPrefs.GetString("clipboardTask");
+            }
+            i = 0;
+        }
+        else
+        {
+
+        }
+
+    }
+
+    public void slot7(int i) //working on this
+    {
+        if (i == 1)
+        {
+            two = 7;
             if (isTasking == true)
             {
                 buttons[one, two] = PlayerPrefs.GetString("clipboardTask");
